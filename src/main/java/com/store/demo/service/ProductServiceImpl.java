@@ -92,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
     @Retryable(value = SQLException.class)
     public String deleteById(int id) {                          // TODO: 06.05.2020 Can't delete because of foreign keys
         if(productRepo.existsById(id)) {
+            productRepo.findById(id).ifPresent(product -> product.setType(null));
             productRepo.deleteById(id);
             LOGGER.info("User deleted product with ID: "+id);
             Objects.requireNonNull(cacheManager.getCache("products")).clear();

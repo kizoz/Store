@@ -12,9 +12,6 @@ public class TypeOfProduct {
 
     private String type;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "type")
-    private List<Product> products;
-
     public TypeOfProduct() {
     }
 
@@ -44,13 +41,5 @@ public class TypeOfProduct {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 }
