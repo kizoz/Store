@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    @CachePut(value = "products")
+    @Cacheable(value = "products")
     @Retryable(value = SQLException.class)
     public Product getById(int id) {
         if(productRepo.existsById(id)){
