@@ -85,15 +85,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Retryable(value = SQLException.class)
-    public void addOrder(String productName){
+    public String addOrder(String productName){
         User user= userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if(productRepo.findByName(productName)!=null) {
-            LOGGER.info("Product "+productName+" was added to cart");
+            LOGGER.info(String.format("Product %s was added to cart", productName));
             user.getProducts().add(productRepo.findByName(productName));
             userRepo.save(user);
             Objects.requireNonNull(cacheManager.getCache("users")).clear();
+            return String.format("Product %s was added to cart", productName);
         }
         else LOGGER.debug("Product does not exist");
+        throw new IllegalArgumentException(String.format("Product %s does not exist", productName));
     }
 
     @Override

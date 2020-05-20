@@ -41,21 +41,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public void addType(String type){
+    public String addType(String type){
         TypeOfProduct typeOfProduct =new TypeOfProduct();
         typeOfProduct.setType(type);
         typeRepo.save(typeOfProduct);
         LOGGER.info("New type of product was added");
+        return typeOfProduct.toString();
     }
 
     @Override
     @Retryable(value = SQLException.class)
-    public void addProduct(String name,
+    public String addProduct(String name,
                            Integer price,
                            String type) {
         if(typeRepo.findByType(type)==null){
             LOGGER.error("Invalid product type");
-            return;
+            throw new IllegalArgumentException(String.format("Type %s does not exist", type));
         }
         Product prod= new Product();
         prod.setPrice(price);
@@ -64,6 +65,7 @@ public class ProductServiceImpl implements ProductService {
         productRepo.save(prod);
         LOGGER.info("User added new product");
         Objects.requireNonNull(cacheManager.getCache("products")).clear();
+        return prod.toString();
     }
 
     @Override
@@ -90,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public String deleteById(int id) {                          // TODO: 06.05.2020 Can't delete because of foreign keys
+    public String deleteById(int id) {
         if(productRepo.existsById(id)) {
             productRepo.findById(id).ifPresent(product -> product.setType(null));
             productRepo.deleteById(id);

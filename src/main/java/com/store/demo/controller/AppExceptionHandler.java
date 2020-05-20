@@ -11,8 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(){
-        return new ResponseEntity<>("Illegal argument", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exc){
+        return new ResponseEntity<>(String.format("Illegal argument %s", exc.getMessage()), HttpStatus.BAD_REQUEST);
     }
-
 }

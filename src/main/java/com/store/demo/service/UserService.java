@@ -12,7 +12,7 @@ public interface UserService {
 
     List<Product> getByType(String type, int p);
 
-    void addOrder(String productName);
+    String addOrder(String productName);
 
     List<Product> showOrders(int page);
 

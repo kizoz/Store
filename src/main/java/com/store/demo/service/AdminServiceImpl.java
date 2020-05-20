@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 public class AdminServiceImpl implements AdminService {
 
     private final Logger logger= LoggerFactory.getLogger(this.getClass());
@@ -21,7 +22,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional
     public void banUser(String username) {
         User user=userRepo.findByUsername(username);
         if(user!=null) {
@@ -33,7 +33,6 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional
     public void unBanUser(String username) {
         User user=userRepo.findByUsername(username);
         if(user!=null) {

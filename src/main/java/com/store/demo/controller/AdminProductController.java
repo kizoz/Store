@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping(path = "/a")
+@RequestMapping(path = "/adm")
 public class AdminProductController {
 
     private final ProductService service;
@@ -28,7 +28,7 @@ public class AdminProductController {
         return String.format("Saved %s %s %s", name, price, type);
     }
 
-    @RequestMapping(path = "/addt", method = {RequestMethod.POST, RequestMethod.GET})       // Add type of product
+    @RequestMapping(path = "/addType", method = {RequestMethod.POST, RequestMethod.GET})       // Add type of product
     public String addType(@RequestParam String type){
         service.addType(type);
         return String.format("New type was saved %s",type);
@@ -47,7 +47,7 @@ public class AdminProductController {
         return service.deleteById(id);
     }
 
-    @GetMapping(path = "/getcust/{productName}")                                                    //  Get all customers who added {productName} no their cart
+    @GetMapping(path = "/getCustomer/{productName}")                                                    //  Get all customers who added {productName} no their cart
     public Iterable<String> getCustomers(@PathVariable String productName, @RequestParam int page){
         return service.showCustomers(productName, page).stream()
                 .map(User::toString)
@@ -59,7 +59,7 @@ public class AdminProductController {
         adminService.banUser(username);
     }
 
-    @GetMapping(path = "/unban/{username}")
+    @GetMapping(path = "/unBan/{username}")
     public void unBanUser(@PathVariable String username){
         adminService.unBanUser(username);
     }

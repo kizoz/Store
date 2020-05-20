@@ -32,21 +32,21 @@ public class UserProductController {
         else return "Product does not exist";
     }
 
-    @GetMapping(path = "/getbt/{type}")                 // Getting products by type
+    @GetMapping(path = "/getByType/{type}")                 // Getting products by type
     public Iterable<String> getByType(@PathVariable String type, @RequestParam int page){
         return service.getByType(type, page).stream()
                 .map(Product::toString)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/getord/{page}")                // Getting orders for particular customer
+    @GetMapping(path = "/getOrder/{page}")                // Getting orders for particular customer
     public Iterable<String> getOrders(@PathVariable int page){
         return service.showOrders(page).stream()
                 .map(Product::toString)
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/addorder", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(path = "/addOrder", method = {RequestMethod.GET, RequestMethod.POST})
     public String addOrder(@RequestParam String productName){
         service.addOrder(productName);
         return "Order was added";
