@@ -12,6 +12,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException exc){
-        return new ResponseEntity<>(String.format("Illegal argument %s", exc.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(String.format("Illegal argument: \n %s", exc.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

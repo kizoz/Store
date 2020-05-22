@@ -6,9 +6,9 @@ import com.store.demo.repository.UserRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
@@ -25,40 +25,25 @@ public class RegistrationController {
         this.userRepo = userRepo;
     }
 
-    @RequestMapping(path = "/reg", method = {RequestMethod.POST, RequestMethod.GET})
-    public String addUser(@RequestParam String n,
-                   @RequestParam String p){
-        logger.info("Function started");
-
-        if(userRepo.findByUsername(n)!=null) {
+    @PostMapping(path = "/reg/{property}")
+    public String addUser(@RequestBody User user, @PathVariable String property){
+        if(userRepo.findByUsername(user.getUsername())!=null) {
             logger.error("User already exists");
             return "User already exists";
         }
-        User user=new User();
-        user.setPassword(p);
-        user.setEnabled(true);
-        user.setUsername(n);
-        user.setRole(Collections.singleton(Role.USER));
+        switch (property){
+            case "u":
+                user.setRole(Collections.singleton(Role.USER));
+                break;
+            case "a":
+                user.setRole(Collections.singleton(Role.ADMIN));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid property, type in 'a' if you want to register admin, or 'u' if you want to register user");
+        }
         userRepo.save(user);
         logger.info("New user was saved");
         return "User was saved";
-    }
-
-    @RequestMapping(path = "/regadmin", method = {RequestMethod.GET,RequestMethod.POST})
-    public String addAdmin(@RequestParam String n,
-                    @RequestParam String p){
-        if(userRepo.findByUsername(n)!=null) {
-            logger.error("Admin already exists");
-            return "Admin already exists";
-        }
-        User user=new User();
-        user.setPassword(p);
-        user.setEnabled(true);
-        user.setUsername(n);
-        user.setRole(Collections.singleton(Role.ADMIN));
-        userRepo.save(user);
-        logger.info("New admin was saved");
-        return "Admin was saved";
     }
 
 

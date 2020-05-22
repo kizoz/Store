@@ -1,5 +1,7 @@
 package com.store.demo.controller;
 
+import com.store.demo.domain.Product;
+import com.store.demo.domain.TypeOfProduct;
 import com.store.demo.domain.User;
 import com.store.demo.service.AdminService;
 import com.store.demo.service.ProductService;
@@ -22,16 +24,14 @@ public class AdminProductController {
         this.adminService = adminService;
     }
 
-    @RequestMapping(path = "/add", method={RequestMethod.POST, RequestMethod.GET})
-    public String addProduct(@RequestParam String name, @RequestParam Integer price, @RequestParam(defaultValue = "comp") String type){
-        service.addProduct(name, price, type);
-        return String.format("Saved %s %s %s", name, price, type);
+    @PostMapping(path = "/add")
+    public String addProduct(@RequestBody Product product){
+        return String.format("Saved %s", service.addProduct(product));
     }
 
-    @RequestMapping(path = "/addType", method = {RequestMethod.POST, RequestMethod.GET})       // Add type of product
-    public String addType(@RequestParam String type){
-        service.addType(type);
-        return String.format("New type was saved %s",type);
+    @PostMapping(path = "/addType")       // Add type of product
+    public String addType(@RequestBody TypeOfProduct type){
+        return String.format("New type was saved %s",service.addType(type));
     }
 
     @RequestMapping(path="/edit/{id}")

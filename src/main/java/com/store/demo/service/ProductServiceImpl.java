@@ -41,31 +41,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public String addType(String type){
-        TypeOfProduct typeOfProduct =new TypeOfProduct();
-        typeOfProduct.setType(type);
-        typeRepo.save(typeOfProduct);
+    public String addType(TypeOfProduct type){
+
+        if(typeRepo.findByType(type.getType())!=null)
+            throw new IllegalArgumentException(String.format("Type %s already exists", type));
+
+        typeRepo.save(type);
         LOGGER.info("New type of product was added");
-        return typeOfProduct.toString();
+        return type.toString();
     }
 
     @Override
     @Retryable(value = SQLException.class)
-    public String addProduct(String name,
-                           Integer price,
-                           String type) {
-        if(typeRepo.findByType(type)==null){
-            LOGGER.error("Invalid product type");
-            throw new IllegalArgumentException(String.format("Type %s does not exist", type));
-        }
-        Product prod= new Product();
-        prod.setPrice(price);
-        prod.setName(name);
-        prod.setType(typeRepo.findByType(type));
-        productRepo.save(prod);
+    public String addProduct(Product product) {
+        productRepo.save(product);
         LOGGER.info("User added new product");
         Objects.requireNonNull(cacheManager.getCache("products")).clear();
-        return prod.toString();
+        return product.toString();
     }
 
     @Override

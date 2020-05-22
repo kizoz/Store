@@ -1,7 +1,6 @@
 package com.store.demo.domain;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "product_type")

@@ -46,7 +46,7 @@ public class UserProductController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/addOrder", method = {RequestMethod.GET, RequestMethod.POST})
+    @PostMapping(path = "/addOrder")
     public String addOrder(@RequestParam String productName){
         service.addOrder(productName);
         return "Order was added";

@@ -1,5 +1,10 @@
 package com.store.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -20,7 +25,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "type_id")
     private TypeOfProduct type;
-
 
     @Override
     public String toString() {
