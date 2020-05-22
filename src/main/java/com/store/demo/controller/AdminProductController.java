@@ -1,5 +1,8 @@
 package com.store.demo.controller;
 
+import com.store.demo.DTO.AddProductDTO;
+import com.store.demo.DTO.AddTypeDTO;
+import com.store.demo.DTO.EditProductDTO;
 import com.store.demo.domain.Product;
 import com.store.demo.domain.TypeOfProduct;
 import com.store.demo.domain.User;
@@ -25,21 +28,18 @@ public class AdminProductController {
     }
 
     @PostMapping(path = "/add")
-    public String addProduct(@RequestBody Product product){
-        return String.format("Saved %s", service.addProduct(product));
+    public String addProduct(@RequestBody AddProductDTO productDTO){
+        return String.format("Saved %s", service.addProduct(productDTO));
     }
 
     @PostMapping(path = "/addType")       // Add type of product
-    public String addType(@RequestBody TypeOfProduct type){
-        return String.format("New type was saved %s",service.addType(type));
+    public String addType(@RequestBody AddTypeDTO typeDTO){
+        return String.format("New type was saved %s",service.addType(typeDTO));
     }
 
-    @RequestMapping(path="/edit/{id}")
-    public String editProduct(@PathVariable("id") int id,
-                              @RequestParam String name,
-                              @RequestParam Integer price,
-                              @RequestParam(defaultValue = "comp") String type){
-        return service.editProduct(id, name, price, type);
+    @PostMapping(path="/edit")
+    public String editProduct(@RequestBody EditProductDTO productDTO){
+        return service.editProduct(productDTO);
     }
 
     @RequestMapping(path = "/delete/{id}")

@@ -22,7 +22,7 @@ class ProductServiceImplTest {
     @MockBean
     private TypeRepo typeRepo;
 
-    @Test
+    /*@Test
     void addType() {
         TypeOfProduct type1 = new TypeOfProduct();
         type1.setType("TYPE");
@@ -48,5 +48,5 @@ class ProductServiceImplTest {
 
     @Test
     void addProduct() {
-    }
+    }*/
 }

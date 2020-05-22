@@ -1,5 +1,8 @@
 package com.store.demo.service;
 
+import com.store.demo.DTO.AddProductDTO;
+import com.store.demo.DTO.AddTypeDTO;
+import com.store.demo.DTO.EditProductDTO;
 import com.store.demo.domain.Product;
 import com.store.demo.domain.TypeOfProduct;
 import com.store.demo.domain.User;
@@ -41,10 +44,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public String addType(TypeOfProduct type){
+    public String addType(AddTypeDTO typeDTO){
 
-        if(typeRepo.findByType(type.getType())!=null)
-            throw new IllegalArgumentException(String.format("Type %s already exists", type));
+        if(typeRepo.findByType(typeDTO.getType())!=null)
+            throw new IllegalArgumentException(String.format("Type %s already exists", typeDTO.getType()));
+
+        TypeOfProduct type=new TypeOfProduct();
+        type.setType(typeDTO.getType());
 
         typeRepo.save(type);
         LOGGER.info("New type of product was added");
@@ -53,7 +59,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public String addProduct(Product product) {
+    public String addProduct(AddProductDTO productDTO) {
+
+        Product product=new Product();
+        product.setType(typeRepo.findByType(productDTO.getType()));
+        product.setName(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
+
         productRepo.save(product);
         LOGGER.info("User added new product");
         Objects.requireNonNull(cacheManager.getCache("products")).clear();
@@ -62,23 +74,32 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Retryable(value = SQLException.class)
-    public String editProduct(Integer id,
-                              String name,
-                              int price,
-                              String type) {
+    public String editProduct(EditProductDTO productDTO) {
         Product prod;
-        if(productRepo.existsById(id)){
-            prod=productRepo.findById(id).get();
+        if(productRepo.existsById(productDTO.getId())){
+            prod=productRepo.findById(productDTO.getId()).get();
 
-            prod.setPrice(price);
-            prod.setName(name);
-            prod.setType(typeRepo.findByType(type));
+            if(productDTO.getPrice()!=null) {
+                if(productDTO.getPrice() >= 0)
+                prod.setPrice(productDTO.getPrice());
+            }
+
+            if(productDTO.getName()!=null)
+                prod.setName(productDTO.getName());
+
+
+            if(productDTO.getType()!=null) {
+                if(typeRepo.findByType(productDTO.getType())==null)
+                    throw new IllegalArgumentException(String.format("Type %s does not exist", productDTO.getType()));
+                prod.setType(typeRepo.findByType(productDTO.getType()));
+            }
             productRepo.save(prod);
-            LOGGER.info("User has changed product with ID: "+id);
+
+            LOGGER.info("User has changed product with ID: "+productDTO.getId());
             Objects.requireNonNull(cacheManager.getCache("products")).clear();
-            return "Product with id= "+id+" was updated";
+            return String.format("Product with id= %s was updated", productDTO.getId());
         }
-        LOGGER.warn("Invalid ID: "+id);
+        LOGGER.warn(String.format("Invalid ID: %s", productDTO.getId()));
         return "Product does not exist";
     }
 

@@ -39,7 +39,7 @@ public class UserProductController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(path = "/getOrder/{page}")                // Getting orders for particular customer
+    @GetMapping(path = "/getOrder/{page}")                  // Getting orders for particular customer
     public Iterable<String> getOrders(@PathVariable int page){
         return service.showOrders(page).stream()
                 .map(Product::toString)
