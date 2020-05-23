@@ -3,8 +3,6 @@ package com.store.demo.controller;
 import com.store.demo.DTO.AddProductDTO;
 import com.store.demo.DTO.AddTypeDTO;
 import com.store.demo.DTO.EditProductDTO;
-import com.store.demo.domain.Product;
-import com.store.demo.domain.TypeOfProduct;
 import com.store.demo.domain.User;
 import com.store.demo.service.AdminService;
 import com.store.demo.service.ProductService;

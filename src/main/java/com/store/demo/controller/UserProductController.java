@@ -1,6 +1,6 @@
 package com.store.demo.controller;
 
-import com.store.demo.domain.Product;
+import com.store.demo.DTO.OutputProductDTO;
 import com.store.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class UserProductController {
     @GetMapping(path = "/all/{page}")
     public Iterable<String> showAllPageable(@PathVariable int page) {
         return service.findAllPage(page).stream()
-                .map(Product::toString)
+                .map(OutputProductDTO::toString)
                 .collect(Collectors.toList());
     }
 
@@ -35,20 +35,19 @@ public class UserProductController {
     @GetMapping(path = "/getByType/{type}")                 // Getting products by type
     public Iterable<String> getByType(@PathVariable String type, @RequestParam int page){
         return service.getByType(type, page).stream()
-                .map(Product::toString)
+                .map(OutputProductDTO::toString)
                 .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/getOrder/{page}")                  // Getting orders for particular customer
     public Iterable<String> getOrders(@PathVariable int page){
         return service.showOrders(page).stream()
-                .map(Product::toString)
+                .map(OutputProductDTO::toString)
                 .collect(Collectors.toList());
     }
 
     @PostMapping(path = "/addOrder")
     public String addOrder(@RequestParam String productName){
-        service.addOrder(productName);
-        return "Order was added";
+        return String.format("%s was added to your cart", service.addOrder(productName));
     }
 }

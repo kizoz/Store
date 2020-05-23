@@ -27,7 +27,8 @@ public class Product {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", type=" + type.getType() +
+                ", users=" + users +
+                ", type=" + type +
                 '}';
     }
 

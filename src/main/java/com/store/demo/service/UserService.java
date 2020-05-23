@@ -1,22 +1,22 @@
 package com.store.demo.service;
 
+import com.store.demo.DTO.OutputProductDTO;
 import com.store.demo.domain.Product;
-import org.springframework.data.domain.Page;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public interface UserService {
 
-    Product getById(int id);
+    OutputProductDTO getById(int id);
 
-    List<Product> getByType(String type, int p);
+    List<OutputProductDTO> getByType(String type, int p);
 
     String addOrder(String productName);
 
-    List<Product> showOrders(int page);
+    List<OutputProductDTO> showOrders(int page);
 
-    Page<Product> findAllPage(int page);
+    List<OutputProductDTO> findAllPage(int page);
 
     Product recover(SQLException sqlException, int page);
 }

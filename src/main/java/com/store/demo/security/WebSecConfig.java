@@ -41,7 +41,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                     .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                     .addFilterAfter(new JwtVerifier(userRepo), JwtAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/",  "/reg/*").permitAll()
+                    .antMatchers("/",  "/reg").permitAll()
                     .antMatchers("/a/**").hasAuthority("ADMIN")
                     .antMatchers("/**").hasAnyAuthority("USER", "ADMIN")
                     .anyRequest().authenticated();

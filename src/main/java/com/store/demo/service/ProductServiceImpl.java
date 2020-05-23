@@ -3,11 +3,13 @@ package com.store.demo.service;
 import com.store.demo.DTO.AddProductDTO;
 import com.store.demo.DTO.AddTypeDTO;
 import com.store.demo.DTO.EditProductDTO;
+import com.store.demo.DTO.OutputProductDTO;
 import com.store.demo.domain.Product;
 import com.store.demo.domain.TypeOfProduct;
 import com.store.demo.domain.User;
 import com.store.demo.repository.ProductRepo;
 import com.store.demo.repository.TypeRepo;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +35,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final CacheManager cacheManager;
 
+    private final ModelMapper modelMapper;
+
     private static final Logger LOGGER =  LoggerFactory.getLogger(ProductServiceImpl.class.getName());
 
     @Autowired
-    public ProductServiceImpl(ProductRepo repo, TypeRepo typeRepo, CacheManager cacheManager) {
+    public ProductServiceImpl(ProductRepo repo, TypeRepo typeRepo, CacheManager cacheManager, ModelMapper modelMapper) {
         this.productRepo = repo;
         this.typeRepo = typeRepo;
         this.cacheManager = cacheManager;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         productRepo.save(product);
         LOGGER.info("User added new product");
         Objects.requireNonNull(cacheManager.getCache("products")).clear();
-        return product.toString();
+        return modelMapper.map(product, OutputProductDTO.class).toString();
     }
 
     @Override
@@ -82,6 +87,8 @@ public class ProductServiceImpl implements ProductService {
             if(productDTO.getPrice()!=null) {
                 if(productDTO.getPrice() >= 0)
                 prod.setPrice(productDTO.getPrice());
+                else
+                    throw new IllegalArgumentException(String.format("Price can't be negative %s", productDTO.getPrice()));
             }
 
             if(productDTO.getName()!=null)
@@ -95,9 +102,10 @@ public class ProductServiceImpl implements ProductService {
             }
             productRepo.save(prod);
 
-            LOGGER.info("User has changed product with ID: "+productDTO.getId());
+            LOGGER.info(String.format("User has changed product with ID: %s",productDTO.getId()));
             Objects.requireNonNull(cacheManager.getCache("products")).clear();
-            return String.format("Product with id= %s was updated", productDTO.getId());
+            return String.format("Product with id= %s was updated to %s", productDTO.getId(),
+                    modelMapper.map(prod, OutputProductDTO.class).toString());
         }
         LOGGER.warn(String.format("Invalid ID: %s", productDTO.getId()));
         return "Product does not exist";
@@ -113,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
             Objects.requireNonNull(cacheManager.getCache("products")).clear();
             return "Product was deleted";
         }
-        LOGGER.warn("Invalid ID: "+id);
+        LOGGER.warn(String.format("Invalid ID: %s", id));
         return "Product does not exist";
     }
 
@@ -124,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
         if (productRepo.findByName(productName) != null) {
             List<User> products=productRepo.findByName(productName).getUsers();
 
-            LOGGER.info("List of users who got " + productName);
+            LOGGER.info(String.format("List of users who got %s", productName));
             return getListOfPage(products, p);
         } else {
             LOGGER.info("Product does not exist");
