@@ -66,9 +66,8 @@ class ProductServiceImplTest {
         AddTypeDTO type1 = new AddTypeDTO();
         type1.setType("TYPE");
 
-        Mockito.doReturn(new TypeOfProduct())
-                .when(typeRepo)
-                .findByType("TYPE");
+        Mockito.when(typeRepo.findByType("TYPE"))
+                .thenReturn(new TypeOfProduct());
 
         Assertions.assertThrows(ExhaustedRetryException.class, () -> productService.addType(type1));
     }
@@ -83,14 +82,14 @@ class ProductServiceImplTest {
         TypeOfProduct type = new TypeOfProduct();
         type.setType("type");
 
-        Mockito.doReturn(type)
-                .when(typeRepo)
-                .findByType("type");
+        Mockito.when(typeRepo.findByType("type"))
+                    .thenReturn(type);
 
         String actual = productService.addProduct(addProductDTO);
 
         Assertions.assertEquals("Product {name='name', price=100, type='type'}", actual);
     }
+
     @Test
     void edit(){
         TypeOfProduct type = new TypeOfProduct();
@@ -111,17 +110,14 @@ class ProductServiceImplTest {
         editProductDTO.setPrice(null);
         editProductDTO.setType("e");
 
-        Mockito.doReturn(product)
-                .when(productRepo)
-                .getOne(1);
+        Mockito.when(productRepo.getOne(1))
+                .thenReturn(product);
 
-        Mockito.doReturn(true)
-                .when(productRepo)
-                .existsById(1);
+        Mockito.when(productRepo.existsById(1))
+                .thenReturn(true);
 
-        Mockito.doReturn(typeE)
-                .when(typeRepo)
-                .findByType("e");
+        Mockito.when(typeRepo.findByType("e"))
+                .thenReturn(typeE);
 
         String actual = productService.editProduct(editProductDTO);
 

@@ -58,9 +58,8 @@ class UserServiceImplTest {
         products.add(product1);
         products.add(product2);
 
-        Mockito.doReturn(type)
-                .when(typeRepo)
-                .findByType("type");
+        Mockito.when(typeRepo.findByType("type"))
+                .thenReturn(type);
 
         Mockito.when(productRepo.findAllByType(type))
                 .thenReturn(products);
@@ -77,17 +76,14 @@ class UserServiceImplTest {
         type.setType("type");
 
         Product product=new Product();
-        product.setPrice(100);
         product.setName("name");
         product.setType(type);
 
         User user=new User();
-        user.setUsername("user");
         user.setProducts(new ArrayList<>());
 
-        Mockito.doReturn(product)
-                .when(productRepo)
-                .findByName("name");
+        Mockito.when(productRepo.findByName(any()))
+                .thenReturn(product);
 
         Mockito.when(userRepo.findByUsername(any()))
                 .thenReturn(user);
