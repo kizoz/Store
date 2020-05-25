@@ -99,9 +99,9 @@ public class UserServiceImpl implements UserService{
     public String addOrder(String productName){
         User user= userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         if(productRepo.findByName(productName)!=null) {
-            LOGGER.info(String.format("Product %s was added to cart", productName));
             user.getProducts().add(productRepo.findByName(productName));
             userRepo.save(user);
+            LOGGER.info(String.format("Product %s was added to cart", productName));
             Objects.requireNonNull(cacheManager.getCache("users")).clear();
             return String.format("Product %s was added to cart", convertToDTO(productRepo.findByName(productName)));
         }
