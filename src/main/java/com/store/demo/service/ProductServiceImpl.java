@@ -103,7 +103,6 @@ public class ProductServiceImpl implements ProductService {
 
             LOGGER.info(String.format("User has changed product with ID: %s",productDTO.getId()));
             Objects.requireNonNull(cacheManager.getCache("products")).clear();
-            System.out.println(modelMapper.map(prod, OutputProductDTO.class).toString());
             return String.format("Product with id= %s was updated to %s", productDTO.getId(),
                     modelMapper.map(prod, OutputProductDTO.class).toString());
         }
