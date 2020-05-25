@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
     public String editProduct(EditProductDTO productDTO) {
         Product prod;
         if(productRepo.existsById(productDTO.getId())){
-            prod=productRepo.findById(productDTO.getId()).get();
+            prod=productRepo.getOne(productDTO.getId());
 
             if(productDTO.getPrice()!=null) {
                 if(productDTO.getPrice() >= 0)
@@ -94,7 +94,6 @@ public class ProductServiceImpl implements ProductService {
             if(productDTO.getName()!=null)
                 prod.setName(productDTO.getName());
 
-
             if(productDTO.getType()!=null) {
                 if(typeRepo.findByType(productDTO.getType())==null)
                     throw new IllegalArgumentException(String.format("Type %s does not exist", productDTO.getType()));
@@ -104,6 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
             LOGGER.info(String.format("User has changed product with ID: %s",productDTO.getId()));
             Objects.requireNonNull(cacheManager.getCache("products")).clear();
+            System.out.println(modelMapper.map(prod, OutputProductDTO.class).toString());
             return String.format("Product with id= %s was updated to %s", productDTO.getId(),
                     modelMapper.map(prod, OutputProductDTO.class).toString());
         }
