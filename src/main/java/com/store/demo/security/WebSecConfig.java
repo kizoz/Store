@@ -46,5 +46,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**").hasAnyAuthority("USER", "ADMIN")
                     .anyRequest().authenticated();
     }
+
+    
 }
 

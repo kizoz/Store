@@ -14,6 +14,11 @@ public class TypeOfProduct {
     public TypeOfProduct() {
     }
 
+    public TypeOfProduct(Integer id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "TypeOfProduct{" +
