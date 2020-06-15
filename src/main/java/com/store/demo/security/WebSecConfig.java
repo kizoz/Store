@@ -17,13 +17,11 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final UserRepo userRepo;
 
     @Autowired
-    public WebSecConfig(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepo userRepo) {
+    public WebSecConfig(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.userRepo = userRepo;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                    .addFilterAfter(new JwtVerifier(userRepo), JwtAuthenticationFilter.class)
+                    .addFilterAfter(new JwtVerifier(), JwtAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers("/",  "/reg").permitAll()
                     .antMatchers("/a/**").hasAuthority("ADMIN")

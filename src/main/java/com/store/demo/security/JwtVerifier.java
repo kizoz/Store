@@ -1,15 +1,13 @@
 package com.store.demo.security;
 
-import com.store.demo.domain.User;
-import com.store.demo.repository.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,16 +16,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class JwtVerifier extends OncePerRequestFilter {
-
-    private final UserRepo userRepo;
-
-    @Autowired
-    public JwtVerifier(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -50,12 +42,12 @@ public class JwtVerifier extends OncePerRequestFilter {
 
             String username = jws.getBody().getSubject();
 
-            User user= userRepo.findByUsername(username);
-
             Authentication authentication= new UsernamePasswordAuthenticationToken(
                     username,
-                    user.getPassword(),
-                    user.getAuthorities()
+                    null,
+                    Arrays.stream(jws.getBody().get("authorities").toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList())
             );
 
             SecurityContextHolder

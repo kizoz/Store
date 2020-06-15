@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
+import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -52,6 +54,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication authResult) {
         String token= Jwts.builder()
                 .setSubject(authResult.getName())
+                .claim("authorities", authResult.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(",")))
                 .signWith(getKey())
                 .compact();
 
