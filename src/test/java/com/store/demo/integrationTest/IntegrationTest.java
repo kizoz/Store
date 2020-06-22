@@ -33,7 +33,7 @@ public class IntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    public void containerTest() throws Exception{
+    public void containerTest() {
         Assertions.assertTrue(mySQLContainer.isRunning());
     }
 
