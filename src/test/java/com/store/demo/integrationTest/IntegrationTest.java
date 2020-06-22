@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Testcontainers
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:test.properties")
 public class IntegrationTest {
 
     @Container
@@ -60,5 +62,13 @@ public class IntegrationTest {
         mockMvc.perform(get("/all/0"))
                 .andExpect(status().isOk())
         .andExpect(jsonPath("$", iterableWithSize(5)));
+    }
+
+    @Test
+    @WithMockUser(authorities = "USER")
+    public void getTest() throws Exception{
+        mockMvc.perform(get("/get/2"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Product {name='card', price=100, type='comp'}")));
     }
 }
