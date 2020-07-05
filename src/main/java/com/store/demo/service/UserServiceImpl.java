@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl extends ListToPageConverter implements UserService{
 
     private final ProductRepo productRepo;
 
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService{
                 .collect(Collectors.toList());
 
         LOGGER.info("User got all products with type: "+type);
-        return ProductServiceImpl.getListOfPage(products, p);
+        return getListOfPage(products, p, 1);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService{
                 .stream().map(this::convertToDTO)
                 .collect(Collectors.toList());
         LOGGER.info("User get his cart");
-        return ProductServiceImpl.getListOfPage(products, p);
+        return getListOfPage(products, p, 2);
     }
 
     @Recover

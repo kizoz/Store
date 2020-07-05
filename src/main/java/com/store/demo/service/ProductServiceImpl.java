@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Recover;
@@ -27,7 +26,7 @@ import java.util.Objects;
 
 @Service
 @Transactional
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends ListToPageConverter implements ProductService {
 
     private final ProductRepo productRepo;
 
@@ -132,7 +131,7 @@ public class ProductServiceImpl implements ProductService {
             List<User> products=productRepo.findByName(productName).getUsers();
 
             LOGGER.info(String.format("List of users who got %s", productName));
-            return getListOfPage(products, p);
+            return getListOfPage(products, p, 1);
         } else {
             LOGGER.info("Product does not exist");
             return null;
@@ -143,16 +142,5 @@ public class ProductServiceImpl implements ProductService {
     public String recover(SQLException sqlException, int id){               //      Recover for deleteById
         LOGGER.error(String.format("Recover method initialized on error %s",sqlException.getMessage()));
         return "Cannot delete product";
-    }
-
-    protected static <T> List<T> getListOfPage(List<T> list, int p){        //  Gets List, returns page by number
-        PagedListHolder<T> page= new PagedListHolder<>(list);
-        page.setPageSize(1);
-        if(p>page.getPageCount()) {
-            LOGGER.error(String.format("Page number %s out of bounds", p));
-            throw new IllegalArgumentException(String.format("Page number %s out of bounds", p));
-        }
-        page.setPage(p);
-        return page.getPageList();
     }
 }
