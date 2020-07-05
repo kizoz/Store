@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -40,6 +41,16 @@ public class IntegrationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "USER")
+    @Sql(scripts = "/test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    public void allTest() throws Exception{
+
+        mockMvc.perform(get("/all/0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", iterableWithSize(5)));
+    }
+
+    @Test
     @WithMockUser(authorities = "ADMIN")
     public void addProductTest() throws Exception{
 
@@ -57,17 +68,9 @@ public class IntegrationTest {
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void allTest() throws Exception{
-
-        mockMvc.perform(get("/all/0"))
-                .andExpect(status().isOk())
-        .andExpect(jsonPath("$", iterableWithSize(5)));
-    }
-
-    @Test
-    @WithMockUser(authorities = "USER")
     public void getTest() throws Exception{
-        mockMvc.perform(get("/get/2"))
+
+        mockMvc.perform(get("/get/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Product {name='card', price=100, type='comp'}")));
     }
