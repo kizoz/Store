@@ -32,17 +32,14 @@ public class ProductServiceImpl extends ListToPageConverter implements ProductSe
 
     private final TypeRepo typeRepo;
 
-    private final CacheManager cacheManager;
-
     private final ModelMapper modelMapper;
 
     private static final Logger LOGGER =  LoggerFactory.getLogger(ProductServiceImpl.class.getName());
 
     @Autowired
-    public ProductServiceImpl(ProductRepo repo, TypeRepo typeRepo, CacheManager cacheManager, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepo repo, TypeRepo typeRepo, ModelMapper modelMapper) {
         this.productRepo = repo;
         this.typeRepo = typeRepo;
-        this.cacheManager = cacheManager;
         this.modelMapper = modelMapper;
     }
 
@@ -72,7 +69,6 @@ public class ProductServiceImpl extends ListToPageConverter implements ProductSe
 
         productRepo.save(product);
         LOGGER.info("User added new product");
-        Objects.requireNonNull(cacheManager.getCache("products")).clear();
         return modelMapper.map(product, OutputProductDTO.class).toString();
     }
 
@@ -101,12 +97,11 @@ public class ProductServiceImpl extends ListToPageConverter implements ProductSe
             productRepo.save(prod);
 
             LOGGER.info(String.format("User has changed product with ID: %s",productDTO.getId()));
-            Objects.requireNonNull(cacheManager.getCache("products")).clear();
             return String.format("Product with id= %s was updated to %s", productDTO.getId(),
                     modelMapper.map(prod, OutputProductDTO.class).toString());
         }
         LOGGER.warn(String.format("Invalid ID: %s", productDTO.getId()));
-        return "Product does not exist";
+        throw new IllegalArgumentException("Product does not exist");
     }
 
     @Override
@@ -116,7 +111,6 @@ public class ProductServiceImpl extends ListToPageConverter implements ProductSe
             productRepo.findById(id).ifPresent(product -> product.setType(null));
             productRepo.deleteById(id);
             LOGGER.info("User deleted product with ID: "+id);
-            Objects.requireNonNull(cacheManager.getCache("products")).clear();
             return "Product was deleted";
         }
         LOGGER.warn(String.format("Invalid ID: %s", id));

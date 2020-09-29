@@ -1,4 +1,4 @@
-package com.store.demo.retry;
+package com.store.demo.config;
 
 
 import org.springframework.context.annotation.Bean;

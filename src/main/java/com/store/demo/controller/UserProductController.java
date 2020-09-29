@@ -5,7 +5,7 @@ import com.store.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -19,31 +19,25 @@ public class UserProductController {
     }
 
     @GetMapping(path = "/all/{page}")
-    public Iterable<String> showAllPageable(@PathVariable int page) {
-        return service.findAllPage(page).stream()
-                .map(OutputProductDTO::toString)
-                .collect(Collectors.toList());
+    public List<OutputProductDTO> showAllPageable(@PathVariable int page) {
+        return service.findAllPage(page);
     }
 
     @RequestMapping(path = "/get/{id}")
-    public String getProductById(@PathVariable("id")int id){
+    public OutputProductDTO getProductById(@PathVariable("id")int id){
         if(service.getById(id)!=null)
-            return service.getById(id).toString();
-        else return "Product does not exist";
+            return service.getById(id);
+        else throw new IllegalArgumentException("Product does not exist");
     }
 
     @GetMapping(path = "/getByType/{type}")                 // Getting products by type
-    public Iterable<String> getByType(@PathVariable String type, @RequestParam int page){
-        return service.getByType(type, page).stream()
-                .map(OutputProductDTO::toString)
-                .collect(Collectors.toList());
+    public List<OutputProductDTO> getByType(@PathVariable String type, @RequestParam int page){
+        return service.getByType(type, page);
     }
 
     @GetMapping(path = "/getOrder/{page}")                  // Getting orders for particular customer
-    public Iterable<String> getOrders(@PathVariable int page){
-        return service.showOrders(page).stream()
-                .map(OutputProductDTO::toString)
-                .collect(Collectors.toList());
+    public List<OutputProductDTO> getOrders(@PathVariable int page){
+        return service.showOrders(page);
     }
 
     @PostMapping(path = "/addOrder")

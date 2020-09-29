@@ -9,6 +9,7 @@ import com.store.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -46,10 +47,8 @@ public class AdminProductController {
     }
 
     @GetMapping(path = "/getCustomer/{productName}")                                                    //  Get all customers who added {productName} no their cart
-    public Iterable<String> getCustomers(@PathVariable String productName, @RequestParam int page){
-        return service.showCustomers(productName, page).stream()
-                .map(User::toString)
-                .collect(Collectors.toList());
+    public List<User> getCustomers(@PathVariable String productName, @RequestParam int page){
+        return service.showCustomers(productName, page);
     }
 
     @GetMapping(path = "/ban/{username}")
